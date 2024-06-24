@@ -1,0 +1,1 @@
+export type ProfilePosition = 'project manager' | 'developer' | 'designer' | 'tester'
