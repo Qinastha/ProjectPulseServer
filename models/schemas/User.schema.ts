@@ -5,6 +5,9 @@ import {UserRole} from "../types";
 interface IUser extends Document {
     email: string;
     password: string;
+    firstName: string;
+    lastName: string;
+    dateOfBirth: Date;
     role: UserRole;
     profile: ObjectId;
     createdAt: Date;
@@ -16,6 +19,9 @@ interface IUser extends Document {
 const userSchema = new Schema<IUser>({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    firstName: {type: String,required: true},
+    lastName: {type: String, required: true},
+    dateOfBirth: {type: Date,required: true},
     role: {type: String,required: true},
     profile: {type: Schema.Types.ObjectId, ref: 'Profile',unique: true},
     createdAt: {type: Date,required: true,default: Date.now()},
