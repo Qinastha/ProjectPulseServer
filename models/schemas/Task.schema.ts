@@ -1,9 +1,9 @@
 import mongoose, {Document, ObjectId, Schema} from 'mongoose';
-import {ProfilePosition, TaskStatus} from "../types";
+import {UserPosition, TaskStatus} from "../types";
 import {ITaskChecklistItem} from "../interfaces";
 
 interface ITask extends Document {
-    taskDepartment: ProfilePosition,
+    taskDepartment: UserPosition,
     taskStatus:TaskStatus,
     creator: ObjectId;
     project: ObjectId;

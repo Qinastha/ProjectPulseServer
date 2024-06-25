@@ -1,5 +1,5 @@
 export * from './taskStatuses'
-export * from './profilePositions.type';
+export * from './userPositions.type';
 export * from './userRole.type'
 export * from './taskStatuses.type'
 export * from './onlineStatus.type'

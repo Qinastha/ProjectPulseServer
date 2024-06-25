@@ -13,18 +13,22 @@ export const getAllUsers = async (req: Request,res: Response) => {
         } else {
             res.error({message: 'Invalid user data'},400,true)
         }
-    }catch (e) {
-        res.error({message: 'Internal Server Error'},500,true)
+    }catch (e:any) {
+        res.error({message: 'Internal Server Error',details: e.message},500,true)
     }
 
 }
 
 export const updateUser = async (req: Request, res: Response) => {
-    const {email,firstName,lastName} = req.body;
+    const {email,firstName,lastName, role, position,userName,dateOfBirth} = req.body;
     const newUserData = {
         email,
         firstName,
         lastName,
+        role,
+        position,
+        userName,
+        dateOfBirth,
         updatedAt: Date.now()
     };
     const userId = req.user._id
@@ -35,8 +39,8 @@ export const updateUser = async (req: Request, res: Response) => {
         } else {
             res.error({message: 'Invalid user data'},400,true)
         }
-    } catch (e){
-        res.error({message: 'Internal Server Error'},500,true)
+    } catch (e:any){
+        res.error({message: 'Internal Server Error',details: e.message},500,true)
     }
 };
 
@@ -47,11 +51,11 @@ export const deleteUser = async (req:Request,res: Response) => {
        const deletedProfile = await Profile.findOneAndDelete({_id: req.user.profile._id});
        const deletedProjects = await Project.updateMany({members:{$in:{$eq: userId}}},{members: {$pull: {$eq: userId}}})
        if(deletedUser && deletedProfile && deletedProjects) {
-           res.success(null,'User is deleted',204)
+           res.success(null,`User ${deletedUser.firstName} ${deletedUser.lastName} is deleted`,204)
        } else {
            res.error({message: 'Invalid user data'},400,true)
        }
-    }catch (e){
-        res.error({message: 'Internal Server Error'},500,true)
+    }catch (e:any){
+        res.error({message: 'Internal Server Error',details: e.message},500,true)
     }
 }
