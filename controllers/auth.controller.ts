@@ -8,7 +8,7 @@ const generateToken = (id: string) => {
 };
 
 export const registerUser = async (req: Request, res: Response) => {
-    const { email, password,firstName,lastName,dateOfBirth, role } = req.body;
+    const { email, password,firstName,lastName,userName,dateOfBirth, role,profile } = req.body;
 
     try {
         const userExists = await User.findOne({ email });
@@ -17,7 +17,7 @@ export const registerUser = async (req: Request, res: Response) => {
             return res.error({ message: 'User already exists' },400,true)
         }
 
-        const user = await User.create({ email, password,firstName,lastName,dateOfBirth,role });
+        const user = await User.create({ email, password,firstName,lastName,userName,dateOfBirth,role,profile });
 
         if (user) {
             const userID: ObjectId = user._id as ObjectId
@@ -25,8 +25,8 @@ export const registerUser = async (req: Request, res: Response) => {
         } else {
             return res.error({ message: 'Invalid user data' },400,true)
         }
-    }catch (e) {
-        res.error({message: 'Internal Server Error'},500,true)
+    }catch (e: any) {
+        res.error({message: 'Internal Server Error',details: e.message},500,true)
     }
 };
 
@@ -42,7 +42,7 @@ export const authUser = async (req: Request, res: Response) => {
         } else {
             return res.error({ message: 'Invalid username or password' },401,true);
         }
-    }catch (e) {
-        res.error({message: 'Internal Server Error'},500,true)
+    }catch (e:any) {
+        res.error({message: 'Internal Server Error',details: e.message},500,true)
     }
 };

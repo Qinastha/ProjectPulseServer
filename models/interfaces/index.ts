@@ -1,1 +1,1 @@
-export * from './taskChecklistItem.interface'
+export * from './taskChecklistItem.interface';

@@ -20,8 +20,8 @@ export const createNewProfile = async (req: Request,res:Response) => {
         } else  {
                 res.error({message: 'User has already profile'},400)
     }
-        } catch (e) {
-            res.error({message: 'Internal Server Error'},500,true)
+        } catch (e:any) {
+            res.error({message: 'Internal Server Error',details: e.message},500,true)
         }
 }
 
@@ -42,7 +42,7 @@ export const updateProfile = async (req: Request,res:Response) => {
                 res.error({message: 'Invalid user data'},400)
             }
         }
-    } catch (e) {
-        res.error({message: 'Internal Server Error'},500,true)
+    } catch (e:any) {
+        res.error({message: 'Internal Server Error',details: e.message},500,true)
     }
 }
