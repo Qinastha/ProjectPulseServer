@@ -8,40 +8,41 @@ const generateToken = (id: string) => {
 };
 
 export const registerUser = async (req: Request, res: Response) => {
-    const { email, password,role } = req.body;
-    const userExists = await User.findOne({ email });
+    const { email, password,firstName,lastName,dateOfBirth, role } = req.body;
 
-    if (userExists) {
-        return res.status(400).json({ message: 'User already exists' });
-    }
+    try {
+        const userExists = await User.findOne({ email });
 
-    const user = await User.create({ email, password,role });
+        if (userExists) {
+            return res.error({ message: 'User already exists' },400,true)
+        }
 
-    if (user) {
-        const userID: ObjectId = user._id as ObjectId
-        res.status(201).json({
-            _id: userID,
-            email: user.email,
-            role: user.role,
-            token: generateToken(userID.toString()),
-        });
-    } else {
-        res.status(400).json({ message: 'Invalid user data' });
+        const user = await User.create({ email, password,firstName,lastName,dateOfBirth,role });
+
+        if (user) {
+            const userID: ObjectId = user._id as ObjectId
+            res.success(generateToken(userID.toString()), `${user.firstName} ${user.lastName}, your account is created`,201,true)
+        } else {
+            return res.error({ message: 'Invalid user data' },400,true)
+        }
+    }catch (e) {
+        res.error({message: 'Internal Server Error'},500,true)
     }
 };
 
 export const authUser = async (req: Request, res: Response) => {
     const { email, password } = req.body;
-    const user = await User.findOne({ email });
 
-    if (user && (await user.matchPassword(password))) {
-        const userID: ObjectId = user._id as ObjectId
-        res.json({
-            _id: userID,
-            email: user.email,
-            token: generateToken(userID.toString()),
-        });
-    } else {
-        res.status(401).json({ message: 'Invalid username or password' });
+    try {
+        const user = await User.findOne({ email });
+
+        if (user && (await user.matchPassword(password))) {
+            const userID: ObjectId = user._id as ObjectId
+            res.success(generateToken(userID.toString()),`Welcome back, ${user.firstName} ${user.lastName}`,201,true)
+        } else {
+            return res.error({ message: 'Invalid username or password' },401,true);
+        }
+    }catch (e) {
+        res.error({message: 'Internal Server Error'},500,true)
     }
 };

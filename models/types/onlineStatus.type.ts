@@ -1,0 +1,1 @@
+export type OnlineStatus = 'online' | 'away' | 'invisible' | 'do not disturbed'

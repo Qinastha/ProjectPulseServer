@@ -16,11 +16,11 @@ export const checkAuth = async (req: Request, res: Response, next: NextFunction)
             req.user = await User.findById(decoded.id).select('-password').populate('profile');
             next();
         } catch (error) {
-            res.status(401).json({ message: 'Not authorized, token failed' });
+            res.error({message:'Not authorized, token failed'},401);
         }
     }
 
     if (!token) {
-        res.status(401).json({ message: 'Not authorized, no token' });
+        res.error({message:'Not authorized, token failed'},401);
     }
 };
