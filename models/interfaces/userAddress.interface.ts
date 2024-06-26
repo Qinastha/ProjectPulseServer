@@ -3,5 +3,5 @@ export interface UserAddress {
     street2: string,
     city: string,
     country: string,
-    zipCode: number
+    zipCode: string
 }
