@@ -4,7 +4,7 @@ declare namespace Express {
     }
     export interface Response {
         user: any;
-        success: (data,message,statusCode,showUser?) => void,
+        success: (value,message,statusCode,showUser?) => void,
         error: (error,statusCode,showUser?) => void
     }
 }
