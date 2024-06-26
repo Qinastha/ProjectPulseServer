@@ -11,7 +11,7 @@ app.use(express.json());
 
 // Custom Response Middleware
 app.use((req: Request, res:Response, next: NextFunction) => {
-    res.success = (data,message,statusCode,showUser = false) => {
+    res.success = (value,message,statusCode,showUser = false) => {
         res.status(statusCode).json({
             status: statusCode,
             alert: {
@@ -19,7 +19,7 @@ app.use((req: Request, res:Response, next: NextFunction) => {
                 message,
                 showUser
             },
-            data
+            value
         });
     };
     next();
