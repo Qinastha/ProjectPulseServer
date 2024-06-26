@@ -12,7 +12,7 @@ export const getProject = async (req: Request,res: Response) => {
             res.error({message: 'No project found'},400,true)
         }
     }catch (e:any) {
-        res.error({message: 'Internal Server Error',details: e.message},500,true)
+        res.error({message: 'Internal Server Error', details: e.message},500,true)
     }
 }
 
