@@ -3,6 +3,8 @@ import {Profile, User} from "../models";
 
 export const createNewProfile = async (req: Request,res:Response) => {
     const profileData = req.body;
+    console.log('profile data')
+    console.log(profileData)
     const user = req.user;
         try {
             if(!user.profile) {
