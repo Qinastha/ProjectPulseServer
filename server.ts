@@ -1,6 +1,7 @@
 import express, {Application, NextFunction,Request,Response} from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import cors from 'cors'
 import {assistantRoutes, authRoutes, profileRoutes, projectRoutes, userRoutes} from "./routes";
 
 dotenv.config();
@@ -45,12 +46,16 @@ app.use((req: Request, res:Response, next: NextFunction) => {
 
 mongoose.connect(process.env.MONGO_URI!).then(() => console.log('DB is connected'));
 
-app.use(function(req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH');
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-    next();
-});
+// Add a list of allowed origins.
+// If you have more origins you would like to add, you can add them to the array below.
+const allowedOrigins = ['http://localhost:3000'];
+
+const options: cors.CorsOptions = {
+    origin: allowedOrigins
+};
+
+// Then pass these options to cors:
+app.use(cors(options));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/assistant', assistantRoutes);

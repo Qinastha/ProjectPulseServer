@@ -27,7 +27,7 @@ const userSchema = new Schema<IUser>({
     dateOfBirth: {type: Date,required: true},
     role: {type: String,required: true},
     position:{type: String,required: true},
-    profile: {type: Schema.Types.ObjectId, ref: 'Profile',default: null},
+    profile: {type: Schema.Types.ObjectId, ref: 'Profile'},
     createdAt: {type: Date,required: true,default: Date.now()},
     updatedAt: {type: Date,required: true,default: Date.now()},
     lastActiveAt: {type: Date,required: true,default: Date.now()}

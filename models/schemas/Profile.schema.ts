@@ -15,7 +15,7 @@ const profileSchema = new Schema<IProfile>({
     avatar: {type: String},
     phoneNumber: {type: String,unique: true,required: true},
     gender: {type: String,required: true},
-    address: {any: Object},
+    address: {type: Schema.Types.Mixed},
     language: {type: String},
     timeZone: {type: String,required: true}
 });
