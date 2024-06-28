@@ -20,15 +20,8 @@ export const getAllUsers = async (req: Request,res: Response) => {
 }
 
 export const updateUser = async (req: Request, res: Response) => {
-    const {email,firstName,lastName, role, position,userName,dateOfBirth} = req.body;
     const newUserData = {
-        email,
-        firstName,
-        lastName,
-        role,
-        position,
-        userName,
-        dateOfBirth,
+        ...req.body,
         updatedAt: Date.now()
     };
     const userId = req.user._id
