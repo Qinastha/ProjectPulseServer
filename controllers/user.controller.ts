@@ -42,8 +42,8 @@ export const deleteUser = async (req:Request,res: Response) => {
     try {
        const deletedUser = await User.findOneAndDelete({_id: userId});
        const deletedProfile = await Profile.findOneAndDelete({_id: req.user.profile._id});
-       const deletedProjects = await Project.updateMany({members:{$in:{$eq: userId}}},{members: {$pull: {$eq: userId}}})
-       if(deletedUser && deletedProfile && deletedProjects) {
+       // const deletedProjects = await Project.updateMany({members:{$in:{$eq: userId}}},{members: {$pull: {$eq: userId}}})
+       if(deletedUser && deletedProfile) {
            res.success(null,`User ${deletedUser.firstName} ${deletedUser.lastName} is deleted`,204)
        } else {
            res.error({message: 'Invalid user data'},400,true)
