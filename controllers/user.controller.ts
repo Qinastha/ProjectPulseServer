@@ -2,7 +2,11 @@ import { Request, Response } from 'express';
 import {Profile, Project, User} from "../models";
 
 export const getUser = async (req: Request,res: Response) => {
-    res.success(req.user,`User ${req.user.firstName} ${req.user.lastName} is retrieved`,200)
+    try {
+        res.success(req.user,`User ${req.user.firstName} ${req.user.lastName} is retrieved`,200)
+    } catch (e:any) {
+        res.error({message: 'Internal Server Error',details: e.message},500,true)
+    }
 }
 
 export const getAllUsers = async (req: Request,res: Response) => {
@@ -43,6 +47,8 @@ export const deleteUser = async (req:Request,res: Response) => {
        const deletedUser = await User.findOneAndDelete({_id: userId});
        const deletedProfile = await Profile.findOneAndDelete({_id: req.user.profile._id});
        // const deletedProjects = await Project.updateMany({members:{$in:{$eq: userId}}},{members: {$pull: {$eq: userId}}})
+        console.log(deletedUser)
+        console.log(deletedProfile)
        if(deletedUser && deletedProfile) {
            res.success(null,`User ${deletedUser.firstName} ${deletedUser.lastName} is deleted`,204)
        } else {
