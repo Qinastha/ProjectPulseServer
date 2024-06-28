@@ -4,7 +4,7 @@ import {Profile, Project, User} from "../models";
 export const getUser = async (req: Request,res: Response) => {
     try {
         res.success(req.user,`User ${req.user.firstName} ${req.user.lastName} is retrieved`,200)
-    } catch (e) {
+    } catch (e:any) {
         res.error({message: 'Internal Server Error',details: e.message},500,true)
     }
 }
