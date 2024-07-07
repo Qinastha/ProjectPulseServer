@@ -3,12 +3,13 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors'
 import {assistantRoutes, authRoutes, profileRoutes, projectRoutes, userRoutes} from "./routes";
+import bodyParser from "body-parser";
 
 dotenv.config();
 
 const app: Application = express();
 
-app.use(express.json());
+app.use(express.json({limit: '50mb'}));
 
 // Custom Response Middleware
 app.use((req: Request, res:Response, next: NextFunction) => {
