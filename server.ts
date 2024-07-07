@@ -56,7 +56,6 @@ const options: cors.CorsOptions = {
 
 // Then pass these options to cors:
 app.use(cors(options));
-app.use(express.bodyParser({limit: '50mb'}))
 
 app.use('/api/auth', authRoutes);
 app.use('/api/assistant', assistantRoutes);
