@@ -18,7 +18,7 @@ export const getProject = async (req: Request,res: Response) => {
 
 export const getAllProjects = async (req: Request,res: Response) => {
     try {
-        const projects = await Project.find();
+        const projects = await Project.find().populate(['members','creator']);
 
         if(projects){
             res.success(projects,'All projects are successfully retrieved',200,true)
