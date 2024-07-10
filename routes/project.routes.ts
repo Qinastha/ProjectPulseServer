@@ -10,7 +10,7 @@ import {checkAuth, checkAdminRole} from "../middlewares";
 const router = express.Router();
 
 router.get('/:projectId',checkAuth,getProject)
-router.get('/all',checkAuth,checkAdminRole,getAllProjects)
+router.get('/all',checkAuth,getAllProjects)
 router.post('/new',checkAuth,createProject)
 router.put('/update/:projectId',checkAuth,updateProject)
 router.delete('/delete/:projectId',checkAuth,deleteProject)
