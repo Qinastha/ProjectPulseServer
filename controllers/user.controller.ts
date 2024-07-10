@@ -11,7 +11,7 @@ export const getUser = async (req: Request,res: Response) => {
 
 export const getAllUsers = async (req: Request,res: Response) => {
     try {
-        const users = User.find();
+        const users = await User.find();
         if(users) {
             res.success(users,'All users are successfully retrieved',201,true)
         } else {
