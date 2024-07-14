@@ -1,5 +1,30 @@
 import { Request, Response } from 'express';
 import {Profile, User} from "../models";
+import { v2 as cloudinary } from 'cloudinary';
+
+export const uploadAvatar = async (req: Request,res: Response) => {
+    const avatarFile = req.body;
+    try {
+        if(avatarFile) {
+            const uploadResult = await cloudinary.uploader
+                .upload(
+                    avatarFile, {
+                        public_id: 'profiles',
+                    }
+                )
+                .catch((error) => {
+                    console.log(error);
+                });
+            if(uploadResult) {
+                console.log(uploadResult)
+            } else {
+                res.error({message: 'Invalid data format'},400)
+            }
+        }
+    }catch (e: any) {
+        res.error({message: 'Internal Server Error',details: e.message},500,true)
+    }
+}
 
 export const createNewProfile = async (req: Request,res:Response) => {
     const profileData = req.body;

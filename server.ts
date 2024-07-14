@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors'
 import {assistantRoutes, authRoutes, profileRoutes, projectRoutes, userRoutes} from "./routes";
-import bodyParser from "body-parser";
+import { v2 as cloudinary } from 'cloudinary';
 
 dotenv.config();
 
@@ -46,6 +46,12 @@ app.use((req: Request, res:Response, next: NextFunction) => {
 
 
 mongoose.connect(process.env.MONGO_URI!).then(() => console.log('DB is connected'));
+
+cloudinary.config({
+    cloud_name: process.env.CLOUNDINARY_API_CLOUD_NAME,
+    api_key: process.env.CLOUNDINARY_API_KEY,
+    api_secret: process.env.CLOUNDINARY_API_SECRET
+});
 
 // Add a list of allowed origins.
 // If you have more origins you would like to add, you can add them to the array below.
