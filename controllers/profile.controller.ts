@@ -3,12 +3,12 @@ import {Profile, User} from "../models";
 import { v2 as cloudinary } from 'cloudinary';
 
 export const uploadAvatar = async (req: Request,res: Response) => {
-    const avatarFile = req.body;
+    const {avatar} = req.body;
     try {
-        if(avatarFile) {
+        if(avatar) {
             const uploadResult = await cloudinary.uploader
                 .upload(
-                    avatarFile, {
+                    avatar, {
                         public_id: 'profiles',
                     }
                 )
