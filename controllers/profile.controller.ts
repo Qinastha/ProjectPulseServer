@@ -15,8 +15,8 @@ export const uploadAvatar = async (req: Request,res: Response) => {
                 .catch((error) => {
                     console.log(error);
                 });
-            if(uploadResult) {
-                console.log(uploadResult)
+            if(uploadResult?.secure_url) {
+                res.success(uploadResult?.secure_url,'Avatar is successfully uploaded',201,true)
             } else {
                 res.error({message: 'Invalid data format'},400)
             }
