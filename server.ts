@@ -70,7 +70,7 @@ app.use('/api/assistant', assistantRoutes);
 app.use('/api/user',userRoutes)
 app.use('/api/profile',profileRoutes)
 app.use('/api/project',projectRoutes)
-app.use('/api/',coreRoutes)
+app.use('/api/core',coreRoutes)
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
