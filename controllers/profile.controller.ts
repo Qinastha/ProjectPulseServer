@@ -29,7 +29,7 @@ export const createNewProfile = async (req: Request,res:Response) => {
 
 export const updateProfile = async (req: Request,res:Response) => {
     const newProfileData = req.body
-    const profileId = req.user.profile._id;
+    const profileId = req.user?.profile?._id;
     try {
         if(profileId && newProfileData) {
             const updatedProfile = await Profile.findOneAndUpdate({_id:profileId},newProfileData,{new: true});
