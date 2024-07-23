@@ -54,17 +54,17 @@ export const createProject = async (req: Request,res: Response) => {
 
 export const updateProject = async (req: Request,res: Response) => {
     const projectId = req.params.projectId
-    const { projectName,projectDescription,projectAvatar,members,tasks } = req.body;
+    const { projectName,projectDescription,projectAvatar,members,taskLists } = req.body;
     const updateObj = {
         projectName,
         projectDescription,
         projectAvatar,
         members,
-        tasks,
+        taskLists,
         updatedAt: Date.now()
     }
     try {
-        const updatedProject = await Project.findOneAndUpdate({_id: projectId},updateObj,{new:true}).populate(['creator','members','tasks']);
+        const updatedProject = await Project.findOneAndUpdate({_id: projectId},updateObj,{new:true}).populate(['creator','members','taskLists']);
         if(updatedProject) {
             res.success(updatedProject,`Project ${updatedProject.projectName} is successfully updated`,201,true)
         } else {
