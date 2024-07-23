@@ -5,9 +5,10 @@ export const createTaskList = async (req: Request,res: Response) => {
     const projectId = req.params.projectId;
     const {taskListName,taskLists} = req.body
     try {
-        const projectTaskList = await TaskList.create(taskListName);
+        const projectTaskList = await TaskList.create({taskListName});
         if(projectTaskList) {
-            const updatedProject = await Project.findOneAndUpdate({_id:projectId},{taskLists:[...taskLists,projectTaskList]},{new: true}).select('taskLists');
+            const newTaskLists = [...taskLists,projectTaskList._id]
+            const updatedProject = await Project.findOneAndUpdate({_id:projectId},{taskLists:newTaskLists},{new: true}).select('taskLists');
             if(updatedProject) {
                 res.success(updatedProject,`Task list "${taskListName}" is successfully created`,201,true)
             } else {
