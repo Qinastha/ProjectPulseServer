@@ -5,6 +5,7 @@ import cors from 'cors'
 import {assistantRoutes, authRoutes, profileRoutes, projectRoutes, userRoutes} from "./routes";
 import { v2 as cloudinary } from 'cloudinary';
 import {coreRoutes} from "./routes/core.routes";
+import {taskListRoutes} from "./routes/taskList.routes";
 
 dotenv.config();
 
@@ -70,6 +71,7 @@ app.use('/api/assistant', assistantRoutes);
 app.use('/api/user',userRoutes)
 app.use('/api/profile',profileRoutes)
 app.use('/api/project',projectRoutes)
+app.use('/api/project/:projectId/taskList',taskListRoutes)
 app.use('/api/core',coreRoutes)
 
 const PORT = process.env.PORT || 4000;
