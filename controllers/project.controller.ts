@@ -4,7 +4,7 @@ import { Project, Task, Comment } from "../models";
 export const getProject = async (req: Request,res: Response) => {
     const projectId = req.params.projectId;
     try {
-        const project = await Project.findOne({_id: projectId});
+        const project = await Project.findOne({_id: projectId}).populate('taskLists');
 
         if(project) {
             res.success(project,`Project ${project.projectName} is successfully retrieved`,200)

@@ -6,7 +6,7 @@ interface IProject extends Document {
     projectAvatar: string;
     creator: ObjectId;
     members: ObjectId[];
-    tasks: ObjectId[];
+    taskLists: ObjectId[];
     createdAt: Date,
     updatedAt: Date,
     startedAt: Date,
@@ -20,7 +20,7 @@ const projectSchema = new Schema<IProject>({
     projectAvatar: {type:String,default: 'project avatar'},
     creator: {type:Schema.Types.ObjectId, ref: 'User',required: true},
     members: {type:[Schema.Types.ObjectId], ref: 'User',required: true,default: []},
-    tasks: {type: [Schema.Types.ObjectId],ref: 'Task',default: []},
+    taskLists: {type: [Schema.Types.ObjectId],ref: 'TaskList',default: []},
     createdAt: {type: Date,required: true,default: Date.now()},
     updatedAt: {type: Date,required: true,default: Date.now()},
     startedAt: {type: Date},
