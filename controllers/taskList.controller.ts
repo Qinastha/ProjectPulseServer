@@ -26,7 +26,7 @@ export const createTaskList = async (req: Request,res: Response) => {
 export const updateTaskList = async (req: Request,res: Response) => {
     const projectId = req.params.projectId;
     const taskListId = req.params.taskListId;
-    const taskListName = req.body;
+    const {taskListName} = req.body;
     try {
         const updatedTaskList = await TaskList.findOneAndUpdate({_id: taskListId},{taskListName,updatedAt: Date.now()});
         if(updatedTaskList) {
