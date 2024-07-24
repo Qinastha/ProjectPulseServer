@@ -9,7 +9,14 @@ export const createTaskList = async (req: Request,res: Response) => {
         const projectTaskList = await TaskList.create({taskListName});
         if(projectTaskList) {
             const newTaskLists = [...taskLists,projectTaskList._id]
-            const updatedProject = await Project.findOneAndUpdate({_id:projectId},{taskLists:newTaskLists},{new: true}).populate("taskLists");
+            const updatedProject = await Project.findOneAndUpdate({_id:projectId},{taskLists:newTaskLists},{new: true}).populate({
+                path: 'taskLists',
+                model: 'TaskList',
+                populate: {
+                    path: 'tasks',
+                    model: 'Task'
+                }
+            });
             if(updatedProject) {
                 res.success(updatedProject,`Task list "${taskListName}" is successfully created`,201,true)
             } else {
@@ -30,7 +37,7 @@ export const updateTaskList = async (req: Request,res: Response) => {
     try {
         const updatedTaskList = await TaskList.findOneAndUpdate({_id: taskListId},{taskListName,updatedAt: Date.now()});
         if(updatedTaskList) {
-            const taskLists = await Project.findOne({_id:projectId}).populate('taskLists').select('taskLists');
+            const taskLists = await Project.findOne({_id:projectId}).populate('taskLists').select('taskLists').populate('tasks');
             if(taskLists) {
                 res.success(taskLists,`Task list "${taskListName}" is successfully updated`,201,true)
             } else {
