@@ -20,7 +20,7 @@ export const createTask = async (req: Request,res: Response) => {
         if(newTask) {
             const updatedTaskList = await TaskList.findOneAndUpdate({_id: taskListId},{tasks: {$push: newTask._id}})
             if(updatedTaskList) {
-                const taskLists = await Project.findOne({_id: projectId}).populate('taskLists.tasks').select('taskLists')
+                const taskLists = await Project.findOne({_id: projectId}).populate('taskLists.tasks')
                 if(taskLists) {
                     res.success(taskLists,`Task "${title}" is successfully added`,201,true)
                 }else {
