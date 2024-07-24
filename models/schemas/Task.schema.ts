@@ -6,7 +6,6 @@ interface ITask extends Document {
     taskDepartment: UserPosition,
     taskStatus:TaskStatus,
     creator: ObjectId;
-    project: ObjectId;
     members: ObjectId[];
     title: string;
     description: string;
@@ -23,7 +22,6 @@ const taskSchema = new Schema<ITask>({
     taskDepartment:{type: String,required: true},
     taskStatus: {type:String,required: true},
     creator: {type: Schema.Types.ObjectId,ref: 'User',required: true},
-    project: {type: Schema.Types.ObjectId,ref: 'Project',required: true},
     members: {type: [Schema.Types.ObjectId],ref: 'User',required: true},
     title: {type: String,required: true},
     description: {type: String,required: true},

@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
-import {Project, Task} from "../models";
+import {Project, Task, TaskList} from "../models";
 
 export const createTask = async (req: Request,res: Response) => {
-    const projectId = req.params.projectId;
+    const taskListId = req.params.taskListId;
+    const projectId = req.params.projectId
     const {taskDepartment,taskStatus, title, description, members, checkList, deadLine } = req.body;
     const taskObj = {
         title,
@@ -10,7 +11,6 @@ export const createTask = async (req: Request,res: Response) => {
         members,
         checkList,
         deadLine,
-        project: projectId,
         creator: req.user._id,
         taskDepartment,
         taskStatus
@@ -18,16 +18,23 @@ export const createTask = async (req: Request,res: Response) => {
     try {
         const newTask = await Task.create(taskObj)
         if(newTask) {
-            const updatedProject = await Project.findOneAndUpdate({_id: projectId},{tasks: {$push: newTask._id}})
-            if(updatedProject) {
-                res.status(201).json(newTask.populate(['members','creator','comments']))
+            const updatedTaskList = await TaskList.findOneAndUpdate({_id: taskListId},{tasks: {$push: newTask._id}})
+            if(updatedTaskList) {
+                const taskLists = await Project.findOne({_id: projectId}).populate('taskLists.tasks').select('taskLists')
+                if(taskLists) {
+                    res.success(taskLists,`Task "${title}" is successfully added`,201,true)
+                }else {
+                    res.error({message: 'Project is not existed'}, 400)
+                }
             } else {
-                console.log('Project is not updated')
+                res.error({message: 'Task list is not updated'},400)
             }
 
+        } else {
+            res.error({message: 'Invalid user data'},400)
         }
-    }catch (e) {
-        console.log(e)
+    }catch (e:any) {
+        res.error({message: 'Internal Server Error',details: e.message},500,true)
     }
 }
 
