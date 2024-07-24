@@ -30,7 +30,7 @@ export const updateTaskList = async (req: Request,res: Response) => {
     try {
         const updatedTaskList = await TaskList.findOneAndUpdate({_id: taskListId},{taskListName,updatedAt: Date.now()});
         if(updatedTaskList) {
-            const taskLists = await Project.findOne({_id:projectId}).select('taskLists');
+            const taskLists = await Project.findOne({_id:projectId}).populate('taskLists').select('taskLists');
             if(taskLists) {
                 res.success(taskLists,`Task list "${taskListName}" is successfully updated`,201,true)
             } else {
