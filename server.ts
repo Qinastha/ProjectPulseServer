@@ -2,10 +2,8 @@ import express, {Application, NextFunction,Request,Response} from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors'
-import {assistantRoutes, authRoutes, profileRoutes, projectRoutes, userRoutes} from "./routes";
+import {assistantRoutes, authRoutes, profileRoutes, projectRoutes, userRoutes,coreRoutes,taskListRoutes,taskRoutes} from "./routes";
 import { v2 as cloudinary } from 'cloudinary';
-import {coreRoutes} from "./routes/core.routes";
-import {taskListRoutes} from "./routes/taskList.routes";
 
 dotenv.config();
 
@@ -72,6 +70,7 @@ app.use('/api/user',userRoutes)
 app.use('/api/profile',profileRoutes)
 app.use('/api/project',projectRoutes)
 app.use('/api/project/:projectId/taskList',taskListRoutes)
+app.use('/api/project/:projectId/taskList/:taskListId/task',taskRoutes)
 app.use('/api/core',coreRoutes)
 
 const PORT = process.env.PORT || 4000;
