@@ -1,10 +1,11 @@
 import { Request, Response } from 'express';
 import {Project, Task, TaskList} from "../models";
+import {ObjectId} from "mongodb";
 
 export const createTask = async (req: Request,res: Response) => {
     const taskListId = req.params.taskListId;
     const projectId = req.params.projectId
-    const {taskDepartment,taskStatus, title, description, members, checkList, deadLine,tasks } = req.body;
+    const {taskDepartment,taskStatus, title, description, members, checkList, deadLine } = req.body;
     const taskObj = {
         title,
         description,
@@ -18,9 +19,17 @@ export const createTask = async (req: Request,res: Response) => {
     try {
         const newTask = await Task.create(taskObj)
         if(newTask) {
-            const updatedTaskList = await TaskList.findOneAndUpdate({_id: taskListId},{tasks: [...tasks,newTask._id]},{new: true})
+            const taskId = newTask._id as ObjectId
+            const updatedTaskList = await TaskList.findOneAndUpdate({_id: taskListId},{$push: {tasks: taskId}},{new: true})
             if(updatedTaskList) {
-                const taskLists = await Project.findOne({_id: projectId}).populate('taskLists.tasks')
+                const taskLists = await Project.findOne({_id: projectId}).populate({
+                    path: 'taskLists',
+                    model: 'TaskList',
+                    populate: {
+                        path: 'tasks',
+                        model: 'Task'
+                    }
+                })
                 if(taskLists) {
                     res.success(taskLists,`Task "${title}" is successfully added`,201,true)
                 }else {
