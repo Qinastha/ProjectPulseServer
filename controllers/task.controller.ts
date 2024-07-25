@@ -5,7 +5,7 @@ import {ObjectId} from "mongodb";
 export const createTask = async (req: Request,res: Response) => {
     const taskListId = req.params.taskListId;
     const projectId = req.params.projectId
-    const {taskDepartment,taskStatus, title, description, members, checkList, deadLine } = req.body;
+    const {taskDepartment,title, description, members, checkList, deadLine } = req.body;
     const taskObj = {
         title,
         description,
@@ -13,8 +13,7 @@ export const createTask = async (req: Request,res: Response) => {
         checkList,
         deadLine,
         creator: req.user._id,
-        taskDepartment,
-        taskStatus
+        taskDepartment
     }
     try {
         const newTask = await Task.create(taskObj)
@@ -22,14 +21,20 @@ export const createTask = async (req: Request,res: Response) => {
             const taskId = newTask._id as ObjectId
             const updatedTaskList = await TaskList.findOneAndUpdate({_id: taskListId},{$push: {tasks: taskId}},{new: true})
             if(updatedTaskList) {
-                const taskLists = await Project.findOne({_id: projectId}).populate({
+                const taskLists = await Project.findOne({_id: projectId}).populate([{
                     path: 'taskLists',
                     model: 'TaskList',
                     populate: {
                         path: 'tasks',
                         model: 'Task'
                     }
-                })
+                },{
+                    path:'members',
+                    model: 'User'
+                },{
+                    path:'creator',
+                    model: 'User'
+                }])
                 if(taskLists) {
                     res.success(taskLists,`Task "${title}" is successfully added`,201,true)
                 }else {
@@ -49,41 +54,70 @@ export const createTask = async (req: Request,res: Response) => {
 
 export const updateTask = async (req: Request,res: Response) => {
     const taskId = req.params.taskId;
-    const { title,
-        description,
-        deadLine,
-        taskDepartment
-    } = req.body
-    const updatedObj = {
-        title,
-        description,
-        deadLine,
-        taskDepartment
-    }
+    const projectId = req.params.projectId;
+    const updatedObj = req.body
     try {
-        const updatedTask = await Task.findOneAndUpdate({_id: taskId},updatedObj,{new: true}).populate(['members','creator','comments']);
+        const updatedTask = await Task.findOneAndUpdate({_id: taskId},updatedObj,{new: true});
         if(updatedTask) {
-            res.status(201).json(updatedTask)
+            const project = await Project.findOne({_id: projectId}).populate([{
+                path: 'taskLists',
+                model: 'TaskList',
+                populate: {
+                    path: 'tasks',
+                    model: 'Task'
+                }
+            },{
+                path:'members',
+                model: 'User'
+            },{
+                path:'creator',
+                model: 'User'
+            }])
+            if(project) {
+                res.success(project,`Task "${updatedTask.title}" is successfully updated`,201,true)
+            } else {
+                res.error({message: 'Project is not existed'},400)
+            }
+        }else {
+            res.error({message: 'Invalid user data'},400)
         }
-    }catch (e) {
-        console.log(e)
+    }catch (e:any) {
+        res.error({message: 'Internal Server Error',details: e.message},500,true)
     }
 }
-
-// export const updateTaskStatus = async (req: Request,res: Response) => {
-//     const taskId = req.params.taskId;
-//     const {taskStatus} = req.body;
-//     const updated
-// }
 
 export const deleteTask = async (req: Request,res: Response) => {
     const projectId = req.params.projectId;
     const taskId = req.params.taskId;
 
-    const deletedTask = await Task.findOneAndDelete({_id: taskId});
-    const updatedProject = await Project.findOneAndUpdate({_id: projectId},{tasks: {$pull: {$eq: taskId}}})
+    try {
+        const deletedTask = await Task.findOneAndDelete({_id: taskId});
+        const updatedProject = await Project.findOneAndUpdate({_id: projectId},{tasks: {$pull: {$eq: taskId}}})
 
-    if(deletedTask && updatedProject) {
-        res.status(201).json({message: 'Task is deleted'})
+        if(deletedTask && updatedProject) {
+            const project = await Project.findOne({_id: projectId}).populate([{
+                path: 'taskLists',
+                model: 'TaskList',
+                populate: {
+                    path: 'tasks',
+                    model: 'Task'
+                }
+            },{
+                path:'members',
+                model: 'User'
+            },{
+                path:'creator',
+                model: 'User'
+            }])
+            if(project){
+                res.success(project,`Task "${deletedTask.title}" is successfully deleted`,201,true)
+            }else {
+                res.error({message: 'Project is not existed'},400)
+            }
+        }else {
+            res.error({message: 'Invalid user data'},400)
+        }
+    }catch (e: any) {
+        res.error({message: 'Internal Server Error',details: e.message},500,true)
     }
 }
