@@ -5,7 +5,7 @@ import {ObjectId} from "mongodb";
 export const createTask = async (req: Request,res: Response) => {
     const taskListId = req.params.taskListId;
     const projectId = req.params.projectId
-    const {taskDepartment,title, description, members, checkList, deadLine } = req.body;
+    const {taskDepartment,title, description, members, checkList, deadLine,taskStatus } = req.body;
     const taskObj = {
         title,
         description,
@@ -13,7 +13,8 @@ export const createTask = async (req: Request,res: Response) => {
         checkList,
         deadLine,
         creator: req.user._id,
-        taskDepartment
+        taskDepartment,
+        taskStatus
     }
     try {
         const newTask = await Task.create(taskObj)
