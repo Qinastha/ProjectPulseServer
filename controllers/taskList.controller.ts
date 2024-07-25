@@ -9,14 +9,27 @@ export const createTaskList = async (req: Request,res: Response) => {
         const projectTaskList = await TaskList.create({taskListName});
         if(projectTaskList) {
             const newTaskLists = [...taskLists,projectTaskList._id]
-            const updatedProject = await Project.findOneAndUpdate({_id:projectId},{taskLists:newTaskLists},{new: true}).populate({
+            const updatedProject = await Project.findOneAndUpdate({_id:projectId},{taskLists:newTaskLists},{new: true}).populate([{
                 path: 'taskLists',
                 model: 'TaskList',
                 populate: {
                     path: 'tasks',
-                    model: 'Task'
+                    model: 'Task',
+                    populate: [{
+                        path:'members',
+                        model: 'User'
+                    },{
+                        path:'creator',
+                        model: 'User'
+                    }]
                 }
-            });
+            },{
+                path:'members',
+                model: 'User'
+            },{
+                path:'creator',
+                model: 'User'
+            }]);
             if(updatedProject) {
                 res.success(updatedProject,`Task list "${taskListName}" is successfully created`,201,true)
             } else {

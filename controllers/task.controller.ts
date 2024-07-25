@@ -26,7 +26,14 @@ export const createTask = async (req: Request,res: Response) => {
                     model: 'TaskList',
                     populate: {
                         path: 'tasks',
-                        model: 'Task'
+                        model: 'Task',
+                        populate: [{
+                            path:'members',
+                            model: 'User'
+                        },{
+                            path:'creator',
+                            model: 'User'
+                        }]
                     }
                 },{
                     path:'members',
@@ -34,7 +41,7 @@ export const createTask = async (req: Request,res: Response) => {
                 },{
                     path:'creator',
                     model: 'User'
-                }])
+                }]);
                 if(taskLists) {
                     res.success(taskLists,`Task "${title}" is successfully added`,201,true)
                 }else {
@@ -64,7 +71,14 @@ export const updateTask = async (req: Request,res: Response) => {
                 model: 'TaskList',
                 populate: {
                     path: 'tasks',
-                    model: 'Task'
+                    model: 'Task',
+                    populate: [{
+                        path:'members',
+                        model: 'User'
+                    },{
+                        path:'creator',
+                        model: 'User'
+                    }]
                 }
             },{
                 path:'members',
@@ -72,7 +86,7 @@ export const updateTask = async (req: Request,res: Response) => {
             },{
                 path:'creator',
                 model: 'User'
-            }])
+            }]);
             if(project) {
                 res.success(project,`Task "${updatedTask.title}" is successfully updated`,201,true)
             } else {
@@ -100,7 +114,14 @@ export const deleteTask = async (req: Request,res: Response) => {
                 model: 'TaskList',
                 populate: {
                     path: 'tasks',
-                    model: 'Task'
+                    model: 'Task',
+                    populate: [{
+                        path:'members',
+                        model: 'User'
+                    },{
+                        path:'creator',
+                        model: 'User'
+                    }]
                 }
             },{
                 path:'members',
@@ -108,7 +129,7 @@ export const deleteTask = async (req: Request,res: Response) => {
             },{
                 path:'creator',
                 model: 'User'
-            }])
+            }]);
             if(project){
                 res.success(project,`Task "${deletedTask.title}" is successfully deleted`,201,true)
             }else {

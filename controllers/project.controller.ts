@@ -4,14 +4,27 @@ import { Project, Task, Comment } from "../models";
 export const getProject = async (req: Request,res: Response) => {
     const projectId = req.params.projectId;
     try {
-        const project = await Project.findOne({_id: projectId}).populate({
+        const project = await Project.findOne({_id: projectId}).populate([{
             path: 'taskLists',
             model: 'TaskList',
             populate: {
                 path: 'tasks',
-                model: 'Task'
+                model: 'Task',
+                populate: [{
+                    path:'members',
+                    model: 'User'
+                },{
+                    path:'creator',
+                    model: 'User'
+                }]
             }
-        });
+        },{
+            path:'members',
+            model: 'User'
+        },{
+            path:'creator',
+            model: 'User'
+        }]);
 
         if(project) {
             res.success(project,`Project ${project.projectName} is successfully retrieved`,200)
