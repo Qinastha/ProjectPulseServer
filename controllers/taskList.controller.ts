@@ -50,9 +50,29 @@ export const updateTaskList = async (req: Request,res: Response) => {
     try {
         const updatedTaskList = await TaskList.findOneAndUpdate({_id: taskListId},{taskListName,updatedAt: Date.now()});
         if(updatedTaskList) {
-            const taskLists = await Project.findOne({_id:projectId}).populate('taskLists').select('taskLists').populate('tasks');
-            if(taskLists) {
-                res.success(taskLists,`Task list "${taskListName}" is successfully updated`,201,true)
+            const project = await Project.findOne({_id:projectId}).populate([{
+                path: 'taskLists',
+                model: 'TaskList',
+                populate: {
+                    path: 'tasks',
+                    model: 'Task',
+                    populate: [{
+                        path:'members',
+                        model: 'User'
+                    },{
+                        path:'creator',
+                        model: 'User'
+                    }]
+                }
+            },{
+                path:'members',
+                model: 'User'
+            },{
+                path:'creator',
+                model: 'User'
+            }]);
+            if(project) {
+                res.success(project,`Task list "${taskListName}" is successfully updated`,201,true)
             } else {
                 res.error({message: 'Task list is not updated'},400)
             }

@@ -9,7 +9,7 @@ interface ITask extends Document {
     members: ObjectId[];
     title: string;
     description: string;
-    checklist: ITaskChecklistItem[];
+    checkList: ITaskChecklistItem[];
     comments: ObjectId[];
     createdAt: Date;
     updatedAt: Date;
@@ -25,7 +25,7 @@ const taskSchema = new Schema<ITask>({
     members: {type: [Schema.Types.ObjectId],ref: 'User',default: [],required: true},
     title: {type: String,required: true},
     description: {type: String,required: true},
-    checklist: {type: Schema.Types.Mixed},
+    checkList: {type: Schema.Types.Mixed},
     comments: {type: [Schema.Types.ObjectId],ref: 'Comment'},
     createdAt: {type: Date,required: true,default:Date.now()},
     updatedAt: {type: Date,required: true,default: Date.now()},
