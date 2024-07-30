@@ -64,7 +64,13 @@ export const createTask = async (req: Request,res: Response) => {
 export const updateTask = async (req: Request,res: Response) => {
     const taskId = req.params.taskId;
     const projectId = req.params.projectId;
-    const updatedObj = req.body
+    let updatedObj = req.body
+    if(updatedObj.checkList.every((listItem:any) => listItem.isCompleted)) {
+        updatedObj = {
+            ...updatedObj,
+            completedAt: new Date()
+        }
+    }
     try {
         const updatedTask = await Task.findOneAndUpdate({_id: taskId},updatedObj,{new: true});
         if(updatedTask) {
