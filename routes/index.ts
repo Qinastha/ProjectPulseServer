@@ -6,3 +6,4 @@ export * from './project.routes';
 export * from './core.routes';
 export * from './taskList.routes';
 export * from './task.routes';
+export * from './analytics.routes'

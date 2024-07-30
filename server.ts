@@ -2,7 +2,17 @@ import express, {Application, NextFunction,Request,Response} from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors'
-import {assistantRoutes, authRoutes, profileRoutes, projectRoutes, userRoutes,coreRoutes,taskListRoutes,taskRoutes} from "./routes";
+import {
+    assistantRoutes,
+    authRoutes,
+    profileRoutes,
+    projectRoutes,
+    userRoutes,
+    coreRoutes,
+    taskListRoutes,
+    taskRoutes,
+    analyticsRoutes
+} from "./routes";
 import { v2 as cloudinary } from 'cloudinary';
 
 dotenv.config();
@@ -72,6 +82,7 @@ app.use('/api/project',projectRoutes)
 app.use('/api/project/:projectId/taskList',taskListRoutes)
 app.use('/api/project/:projectId/taskList/:taskListId/task',taskRoutes)
 app.use('/api/core',coreRoutes)
+app.use('/api/analytics',analyticsRoutes)
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

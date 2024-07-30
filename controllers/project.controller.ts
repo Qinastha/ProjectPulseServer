@@ -57,7 +57,7 @@ export const createProject = async (req: Request,res: Response) => {
         projectName,
         projectDescription,
         projectAvatar,
-        members,
+        members:[...members,userId],
         creator: userId
     }
    try {
