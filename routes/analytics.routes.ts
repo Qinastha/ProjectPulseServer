@@ -6,6 +6,6 @@ const router = express.Router();
 
 router.get('/numberOfProjects',checkAuth,numberOfProjects)
 router.get('/numberOfUsers',checkAuth,numberOfUsers)
-router.get('/projectMembersPerformance',checkAuth,getProjectMembersPerformance)
+router.get('/projectMembersPerformance/:projectId',checkAuth,getProjectMembersPerformance)
 
 export const analyticsRoutes = router;
