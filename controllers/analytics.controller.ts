@@ -20,19 +20,24 @@ export const numberOfProjects = async (req: Request,res: Response) => {
     try {
         const projects = await Project.find();
         if(projects?.length > 0) {
-            let result:any = {};
+            let data:any = {};
             projects.forEach(project => {
                 const createdMonth = monthNames[project.createdAt?.getMonth()];
                 if(createdMonth) {
-                    if(Object.keys(result).includes(createdMonth)) {
-                        result[createdMonth] += 1
+                    if(Object.keys(data).includes(createdMonth)) {
+                        data[createdMonth] += 1
                     } else {
-                        result[createdMonth] = 1;
+                        data[createdMonth] = 1;
                     }
                 } else {
                     res.error({message: 'Invalid data format for createdAt prop'},400)
                 }
             })
+            const result = {
+                name: "All projects",
+                description: "Analytics of projects",
+                data,
+            }
             res.success(result,'Numbers of all projects are retrieved',201,false)
         }
     }catch (e:any) {
@@ -44,20 +49,25 @@ export const numberOfUsers = async (req: Request,res: Response) => {
     try {
         const users = await User.find();
         if(users?.length > 0) {
-            let result:any = {};
+            let data:any = {};
             users.forEach(user => {
                 const createdMonth = monthNames[user.createdAt?.getMonth()];
                 console.log(createdMonth)
                 if(createdMonth) {
-                    if(Object.keys(result).includes(createdMonth)) {
-                        result[createdMonth] += 1
+                    if(Object.keys(data).includes(createdMonth)) {
+                        data[createdMonth] += 1
                     } else {
-                        result[createdMonth] = 1;
+                        data[createdMonth] = 1;
                     }
                 } else {
                     res.error({message: 'Invalid data format for createdAt prop'},400)
                 }
             })
+            const result = {
+                name: "All users",
+                description: "Analytics of users",
+                data,
+            }
             res.success(result,'Numbers of all projects are retrieved',201,false)
         }
     }catch (e:any) {
@@ -90,21 +100,32 @@ export const getProjectMembersPerformance = async (req: Request,res: Response) =
             model: 'User'
         }]);
         if(project?.members) {
-            let result = [];
+            let result:any = {
+                name: "Members Performance",
+                description: "Members Performance",
+                data: []
+            };
             const allCompletedTasks = project?.taskLists.
             map((list: any) => list.tasks).
             reduce((prev,cur) => prev.concat(cur),[]).
             filter((task:any) => task.completedAt)
 
-            console.log(allCompletedTasks)
-            // project.members.forEach((member:any,index) => {
-            //     const data = {};
-            //     allCompletedTasks.reduce((prev:any,cur:any) => {
-            //         if(cur.members.includes(member._id)) {
-            //             return prev += 1
-            //         } else return prev
-            //     },1)
-            // })
+            project.members.forEach((member:any,index) => {
+                const memberData:any = {};
+                const createdMonth = monthNames[member.createdAt?.getMonth()];
+                allCompletedTasks.forEach((task: any)=> {
+                    if(task.members.find((foundMember: any) => foundMember._id.equals(member._id))){
+                        console.log('exist')
+                        if(Object.keys(memberData).includes(createdMonth)) {
+                            memberData[createdMonth] += 1
+                        } else {
+                            memberData[createdMonth] = 1
+                        }
+                    }
+                })
+                result.data.push({name:member.userName,data: memberData})
+            })
+            res.success(result,'Get members performance',201,false)
 
         }else {
             res.error({message: 'Project is not existed'},400)
