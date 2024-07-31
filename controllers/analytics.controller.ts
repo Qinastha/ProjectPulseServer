@@ -36,7 +36,7 @@ export const numberOfProjects = async (req: Request,res: Response) => {
             const result = {
                 name: "All projects",
                 description: "Analytics of projects",
-                data:[data],
+                data,
             }
             res.success(result,'Numbers of all projects are retrieved',201,false)
         }
@@ -66,7 +66,7 @@ export const numberOfUsers = async (req: Request,res: Response) => {
             const result = {
                 name: "All users",
                 description: "Analytics of users",
-                data:[data],
+                data,
             }
             res.success(result,'Numbers of all projects are retrieved',201,false)
         }
