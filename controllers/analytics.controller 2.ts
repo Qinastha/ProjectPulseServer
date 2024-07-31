@@ -33,11 +33,11 @@ export const numberOfProjects = async (req: Request,res: Response) => {
                     res.error({message: 'Invalid data format for createdAt prop'},400)
                 }
             })
-            const result = [{
+            const result = {
                 name: "All projects",
                 description: "Analytics of projects",
                 data,
-            }]
+            }
             res.success(result,'Numbers of all projects are retrieved',201,false)
         }
     }catch (e:any) {
@@ -63,11 +63,11 @@ export const numberOfUsers = async (req: Request,res: Response) => {
                     res.error({message: 'Invalid data format for createdAt prop'},400)
                 }
             })
-            const result = [{
+            const result = {
                 name: "All users",
                 description: "Analytics of users",
                 data,
-            }]
+            }
             res.success(result,'Numbers of all projects are retrieved',201,false)
         }
     }catch (e:any) {
