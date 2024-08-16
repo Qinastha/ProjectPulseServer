@@ -7,3 +7,4 @@ export * from './core.routes';
 export * from './taskList.routes';
 export * from './task.routes';
 export * from './analytics.routes'
+export * from './chat.routes';

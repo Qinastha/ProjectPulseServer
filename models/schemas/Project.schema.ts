@@ -12,6 +12,7 @@ interface IProject extends Document {
     startedAt: Date,
     completedAt: Date,
     isCompleted: boolean
+    chats: ObjectId[];
 }
 
 const projectSchema = new Schema<IProject>({
@@ -25,7 +26,8 @@ const projectSchema = new Schema<IProject>({
     updatedAt: {type: Date,required: true,default: Date.now()},
     startedAt: {type: Date},
     completedAt: {type: Date},
-    isCompleted: {type: Boolean,required: true,default: false}
+    isCompleted: {type: Boolean,required: true,default: false},
+    chats: {type: [Schema.Types.ObjectId], ref: 'Chat', required: true, default: []}
 });
 
 export const Project = mongoose.model<IProject>('Project', projectSchema);

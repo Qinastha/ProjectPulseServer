@@ -11,9 +11,10 @@ import {
     coreRoutes,
     taskListRoutes,
     taskRoutes,
-    analyticsRoutes
+    analyticsRoutes, chatRoutes
 } from "./routes";
 import { v2 as cloudinary } from 'cloudinary';
+import {messageRoutes} from "./routes/message.routes";
 
 dotenv.config();
 
@@ -83,6 +84,8 @@ app.use('/api/project/:projectId/taskList',taskListRoutes)
 app.use('/api/project/:projectId/taskList/:taskListId/task',taskRoutes)
 app.use('/api/core',coreRoutes)
 app.use('/api/analytics',analyticsRoutes)
+app.use('/api/chat', chatRoutes)
+app.use('/api/chat/:chatId/messages', messageRoutes)
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

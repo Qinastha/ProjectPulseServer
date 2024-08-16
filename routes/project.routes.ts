@@ -5,7 +5,7 @@ import {
     getProject,
     updateProject
 } from "../controllers";
-import {checkAuth, checkAdminRole} from "../middlewares";
+import {checkAuth} from "../middlewares";
 
 const router = express.Router();
 
