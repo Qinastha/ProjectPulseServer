@@ -1,4 +1,6 @@
 import express, {Application, NextFunction,Request,Response} from 'express';
+import http from 'http';
+import {Server} from 'socket.io';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors'
@@ -19,6 +21,13 @@ import {messageRoutes} from "./routes/message.routes";
 dotenv.config();
 
 const app: Application = express();
+const server = http.createServer(app)
+const io = new Server(server, {
+    cors: {
+        origin: "http://localhost:3000",
+        methods: ["GET", "POST"]
+    }
+});
 
 app.use(express.json({limit: '50mb'}));
 
@@ -87,5 +96,18 @@ app.use('/api/analytics',analyticsRoutes)
 app.use('/api/chat', chatRoutes)
 app.use('/api/chat/:chatId/messages', messageRoutes)
 
+//socket
+io.on('connection', (socket) => {
+    console.log('New client connected:', socket.id);
+
+    socket.on('sendMessage', (message) => {
+        io.emit('receiveMessage', message);
+    });
+
+    socket.on('disconnect', () => {
+        console.log('Client disconnected:', socket.id);
+    });
+});
+
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));

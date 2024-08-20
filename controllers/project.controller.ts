@@ -50,6 +50,65 @@ export const getAllProjects = async (req: Request,res: Response) => {
     }
 }
 
+export const getUserProjects = async(req:Request, res:Response) => {
+    const memberId = req.user._id;
+    try {
+        const projects = await Project.find({members: memberId}).populate([
+            {
+                path: 'members',
+                model: 'User',
+            },
+            {
+                path: 'creator',
+                model: 'User',
+            },
+            {
+                path: 'chats',
+                model: 'Chat',
+                populate: [
+                    {
+                        path: 'messages',
+                        model: 'Message',
+                        populate: [
+                            {
+                                path: 'sender',
+                                model: 'User',
+                                populate: {
+                                    path: 'profile',
+                                    model: 'Profile',
+                                },
+                            },
+                            {
+                                path: 'receiver',
+                                model: 'User',
+                                populate: {
+                                    path: 'profile',
+                                    model: 'Profile',
+                                },
+                            },
+                        ],
+                    }, {
+                        path: 'members',
+                        model: 'User',
+                        populate: {
+                            path: 'profile',
+                            model: 'Profile',
+                        },
+                    },
+                ],
+            },
+        ]);
+
+        if(projects){
+            res.success(projects,'Projects of the logged in user are successfully retrieved',200,true)
+        } else {
+            res.error({message: 'No projects found'},404,true)
+        }
+    }catch (e:any) {
+        res.error({message: 'Internal Server Error',details: e.message},500,true)
+    }
+}
+
 export const createProject = async (req: Request,res: Response) => {
     const userId = req.user._id;
     const { projectName,projectDescription,projectAvatar,members } = req.body;

@@ -34,8 +34,6 @@ export const createMessage = async (req: Request, res: Response) => {
 
 export const getMessages = async (req: Request, res: Response) => {
     const chatId = req.params.chatId;
-    console.log("controllers console to sure ============")
-    console.log(req.params)
 
     try {
         const chat = await Chat.findOne({_id: chatId}).populate({
