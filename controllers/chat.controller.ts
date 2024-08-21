@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import {Chat, Project} from "../models";
+import {Chat, Message, Project} from "../models";
 
 export const createChat = async (req: Request, res:Response) => {
   const {name, description, avatar, currentProject} = req.body
@@ -35,6 +35,7 @@ export const createChat = async (req: Request, res:Response) => {
 export const updateChat = async (req: Request, res: Response) => {
     const chatId = req.params.chatId
     const {name, description, avatar, members} = req.body
+
     try {
         const chat = await Chat.findOneAndUpdate({_id: chatId},
             {name, description, avatar, members}, {new: true}).populate([{
@@ -78,16 +79,31 @@ export const updateChat = async (req: Request, res: Response) => {
 }
 
 export const deleteChat = async (req: Request, res: Response) => {
-    const chatId = req.params.chatId
+    const chatId = req.params.chatId;
     try {
-        const chat = await Chat.findOneAndDelete({_id: chatId})
-        if(chat) {
-            res.success(req.projects, 'Chat deleted successfully', 200, false)
+        const project = await Project.findOne({chats:{$in:[chatId]} });
+        if (project) {
+            const chat = await Chat.findOneAndDelete({ _id: chatId });
+            const messages = await Message.deleteMany({_id: {$in: chat!.messages}})
+            if (chat && messages) {
+                const updatedProject = await Project.findOneAndUpdate(
+                    { _id: project._id },
+                    { $pull: { chats: chat._id } },
+                    { new: true }
+                );
+                if (updatedProject) {
+                    res.success(req.projects, 'Chat deleted successfully', 200, false);
+                } else {
+                    res.error({ message: 'Project not updated' }, 400, false);
+                }
+            } else {
+                res.error({ message: 'Chat not found' }, 404, false);
+            }
         } else {
-            res.error({message: 'Chat not found'}, 404, false)
+            res.error({ message: 'Project not found' }, 404, false);
         }
-    } catch(err:any) {
-        res.error({message: 'Internal Server Error',details: err.message},500,true)
+    } catch (err: any) {
+        res.error({ message: 'Internal Server Error', details: err.message }, 500, true);
     }
-}
+};
 
