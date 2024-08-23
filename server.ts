@@ -13,10 +13,12 @@ import {
     coreRoutes,
     taskListRoutes,
     taskRoutes,
-    analyticsRoutes, chatRoutes
+    analyticsRoutes,
+    chatRoutes,
+    messageRoutes
 } from "./routes";
 import { v2 as cloudinary } from 'cloudinary';
-import {messageRoutes} from "./routes/message.routes";
+import socketHandler from "./socket"
 
 dotenv.config();
 
@@ -97,17 +99,7 @@ app.use('/api/chat', chatRoutes)
 app.use('/api/chat/:chatId/messages', messageRoutes)
 
 //socket
-io.on('connection', (socket) => {
-    console.log('New client connected:', socket.id);
-
-    socket.on('sendMessage', (message) => {
-        io.emit('receiveMessage', message);
-    });
-
-    socket.on('disconnect', () => {
-        console.log('Client disconnected:', socket.id);
-    });
-});
+socketHandler(io);
 
 const PORT = process.env.PORT || 4000;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -69,8 +69,7 @@ export const getUserProjects = async(req:Request, res:Response) => {
                     {
                         path: 'messages',
                         model: 'Message',
-                        populate: [
-                            {
+                        populate: {
                                 path: 'sender',
                                 model: 'User',
                                 populate: {
@@ -78,15 +77,6 @@ export const getUserProjects = async(req:Request, res:Response) => {
                                     model: 'Profile',
                                 },
                             },
-                            {
-                                path: 'receiver',
-                                model: 'User',
-                                populate: {
-                                    path: 'profile',
-                                    model: 'Profile',
-                                },
-                            },
-                        ],
                     }, {
                         path: 'members',
                         model: 'User',

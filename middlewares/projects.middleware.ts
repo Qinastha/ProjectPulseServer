@@ -43,21 +43,14 @@ export const getUserProjects = async(req:Request, res:Response, next:NextFunctio
             }, {
                 path:"messages",
                 model: "Message",
-                populate: [{
+                populate: {
                     path:'sender',
                     model: 'User',
                     populate: {
                         path: "profile",
                         model: "Profile",
                     }
-                    }, {
-                    path:'receiver',
-                    model: 'User',
-                    populate: {
-                        path: "profile",
-                        model: "Profile",
-                    }
-                }]
+                }
             }]
         }
         ]);

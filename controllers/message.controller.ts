@@ -1,14 +1,13 @@
 import { Request, Response } from 'express';
 import { Message, Chat } from "../models";
+import {ObjectId} from "mongodb";
 
-export const createMessage = async (req: Request, res: Response) => {
-    const chatId = req.params.chatId
-    const { sender, receiver, content } = req.body;
+export const createMessage = async (message:any) => {
+    const { chatId, sender, content } = message;
 
     try {
         const newMessage = await Message.create({
-            sender,
-            receiver,
+            sender: new ObjectId(sender),
             content,
         });
 
@@ -20,15 +19,18 @@ export const createMessage = async (req: Request, res: Response) => {
             );
 
             if (chat) {
-                res.success(req.projects, 'Message created successfully', 201, false)
-            } else {
-                res.error({message: 'Message created but failed to update the chat'}, 400, false)
+                return newMessage.populate({
+                    path:'sender',
+                    model: 'User',
+                    populate: {
+                        path: 'profile',
+                        model: 'Profile',
+                    },
+                })
             }
-        } else {
-            res.error({message: 'Message not created'}, 400, false)
-        }
+        } return null;
     } catch (err: any) {
-        res.error({ message: 'Internal Server Error'}, 500, false)
+        console.log(err)
     }
 };
 
@@ -42,14 +44,6 @@ export const getMessages = async (req: Request, res: Response) => {
             populate: [
                 {
                     path: 'sender',
-                    model: 'User',
-                    populate: {
-                        path: 'profile',
-                        model: 'Profile',
-                    },
-                },
-                {
-                    path: 'receiver',
                     model: 'User',
                     populate: {
                         path: 'profile',

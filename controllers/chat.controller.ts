@@ -11,13 +11,13 @@ export const createChat = async (req: Request, res:Response) => {
             description,
             avatar,
             currentProject,
-            members: project.members
+            members: [...project.members, req.user._id]
           })
           if(newChat) {
               const updatedProject = await Project.findOneAndUpdate({_id:currentProject},
                   {chats:[...project.chats, newChat]}, {new:true})
               if(updatedProject) {
-                  res.success(req.projects, 'Chat created successfully', 201, false)
+                  res.success(newChat, 'Chat created successfully', 201, false)
               }else {
                   res.error({message: 'Project not updated'}, 400, false)
               }
@@ -51,25 +51,18 @@ export const updateChat = async (req: Request, res: Response) => {
             }, {
                 path:"messages",
                 model: "Message",
-                populate: [{
+                populate: {
                     path: 'sender',
                     model: 'User',
                     populate: {
                         path: "profile",
                         model: "Profile",
                     }
-                    }, {
-                    path: 'receiver',
-                    model: 'User',
-                    populate: {
-                        path: "profile",
-                        model: "Profile",
-                    }
-            }]
+                }
         }
             ])
         if(chat) {
-            res.success(req.projects, 'Chat updated successfully', 200, false)
+            res.success(chat, 'Chat updated successfully', 200, false)
         } else {
             res.error({message: 'Chat not found'}, 404, false)
         }
