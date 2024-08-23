@@ -63,10 +63,7 @@ export const getMessages = async (req: Request, res: Response) => {
     }
 };
 
-export const deleteMessage = async (req: Request, res: Response) => {
-    const chatId = req.params.chatId
-    const messageId = req.params.messageId;
-
+export const deleteMessage = async (chatId: string, messageId: string) => {
     try {
         const message = await Message.findOneAndDelete({_id:messageId});
 
@@ -78,22 +75,16 @@ export const deleteMessage = async (req: Request, res: Response) => {
             );
 
             if (chat) {
-                res.success(req.projects, 'Message deleted successfully', 200, false);
-            } else {
-                res.error({message: 'Message deleted but failed to update the chat'}, 400, false);
-            }
-        } else {
-            res.error({message: 'Message not found'}, 404, false);
+                return messageId
+            } return null
         }
     } catch (err: any) {
-        res.error({message: 'Internal Server Error', details: err.message}, 500, true);
+        console.log(err);
     }
 };
 
 
-export const updateMessage = async (req: Request, res: Response) => {
-    const messageId = req.params.messageId;
-    const { content } = req.body;
+export const updateMessage = async (messageId: string, content: string) => {
 
     try {
         const message = await Message.findOneAndUpdate(
@@ -103,11 +94,16 @@ export const updateMessage = async (req: Request, res: Response) => {
         );
 
         if (message) {
-            res.success(req.projects, 'Message updated successfully', 200, false);
-        } else {
-            res.error({message: 'Message not found'}, 404, false);
-        }
+            return message.populate({
+                path:'sender',
+                model: 'User',
+                populate: {
+                    path: 'profile',
+                    model: 'Profile',
+                },
+            })
+        } return null
     } catch (err: any) {
-        res.error({message: 'Internal Server Error', details: err.message}, 500, true);
+        console.log(err)
     }
 };

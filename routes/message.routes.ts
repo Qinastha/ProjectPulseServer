@@ -5,8 +5,8 @@ import {createMessage, deleteMessage, getMessages, updateMessage} from "../contr
 const router = express.Router({ mergeParams: true });
 
 router.get('/', checkAuth, getUserProjects, getMessages)
-router.post('/', checkAuth, getUserProjects, createMessage)
-router.put('/:messageId', checkAuth, getUserProjects, updateMessage)
-router.delete('/:messageId', checkAuth, getUserProjects, deleteMessage)
+// router.post('/', checkAuth, getUserProjects, createMessage)
+// router.put('/:messageId', checkAuth, getUserProjects, updateMessage)
+// router.delete('/:messageId', checkAuth, getUserProjects, deleteMessage)
 
 export const messageRoutes = router;
