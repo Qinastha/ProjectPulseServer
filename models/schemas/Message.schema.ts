@@ -1,6 +1,6 @@
 import mongoose, {Document, ObjectId} from 'mongoose';
 
-interface IMessage extends Document {
+export interface IMessage extends Document {
     sender: ObjectId;
     content: string;
     date: Date;

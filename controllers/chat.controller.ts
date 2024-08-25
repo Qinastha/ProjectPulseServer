@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import {Chat, Message, Project} from "../models";
 
 export const createChat = async (req: Request, res:Response) => {
-  const {name, description, avatar, currentProject} = req.body
+  const {name, description, avatar, currentProject, members} = req.body
     try {
       const project = await Project.findOne({_id:currentProject})
       if(project) {
@@ -11,13 +11,14 @@ export const createChat = async (req: Request, res:Response) => {
             description,
             avatar,
             currentProject,
-            members: [...project.members, req.user._id]
+            members: [...members, req.user._id]
           })
           if(newChat) {
               const updatedProject = await Project.findOneAndUpdate({_id:currentProject},
                   {chats:[...project.chats, newChat]}, {new:true})
               if(updatedProject) {
-                  res.success(newChat, 'Chat created successfully', 201, false)
+                  const newFullChat = await newChat.populate("members");
+                  res.success(newFullChat, 'Chat created successfully', 201, false)
               }else {
                   res.error({message: 'Project not updated'}, 400, false)
               }
