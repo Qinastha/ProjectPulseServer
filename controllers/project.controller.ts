@@ -101,12 +101,12 @@ export const getUserProjects = async(req:Request, res:Response) => {
 
 export const createProject = async (req: Request,res: Response) => {
     const userId = req.user._id;
-    const { projectName,projectDescription,projectAvatar,members } = req.body;
+    const { projectName, projectDescription, projectAvatar, members } = req.body;
     const projectObj = {
         projectName,
         projectDescription,
         projectAvatar,
-        members:[...members,userId],
+        members:[...members, userId],
         creator: userId
     }
    try {

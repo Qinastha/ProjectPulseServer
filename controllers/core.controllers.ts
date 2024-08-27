@@ -7,9 +7,10 @@ export const uploadImage = async (req: Request,res: Response) => {
         if(avatar) {
             const uploadResult = await cloudinary.uploader
                 .upload(
-                    avatar, {
-                        public_id: 'profiles',
-                    }
+                    avatar,
+                    // {
+                    //     public_id: 'profiles',
+                    // }
                 )
                 .catch((error) => {
                     console.log(error);

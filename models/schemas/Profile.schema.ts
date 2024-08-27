@@ -12,7 +12,7 @@ interface IProfile extends Document {
 }
 
 const profileSchema = new Schema<IProfile>({
-    avatar: {type: String},
+    avatar: {type: String, default: "user avatar"},
     phoneNumber: {type: String,unique: true,required: true},
     gender: {type: String,required: true},
     address: {type: Schema.Types.Mixed},
