@@ -1,5 +1,5 @@
 import express, {Application, NextFunction,Request,Response} from 'express';
-import http from 'http';
+import https from 'https';
 import {Server} from 'socket.io';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
@@ -23,10 +23,10 @@ import socketHandler from "./socket"
 dotenv.config();
 
 const app: Application = express();
-const server = http.createServer(app)
+const server = https.createServer(app)
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:3000",
+        origin: "https://main.d22pq7gf1qs87f.amplifyapp.com",
         methods: ["GET", "POST"]
     }
 });
