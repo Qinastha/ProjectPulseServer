@@ -1,5 +1,5 @@
 import express, {Application, NextFunction,Request,Response} from 'express';
-import https from 'https';
+import http from 'http';
 import {Server} from 'socket.io';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
@@ -23,10 +23,34 @@ import socketHandler from "./socket"
 dotenv.config();
 
 const app: Application = express();
-const server = https.createServer(app)
+const server = http.createServer(app)
+const allowedOrigins = [
+    'http://localhost:3000',
+    'https://main.d22pq7gf1qs87f.amplifyapp.com',
+    'https://pulsehq.site',
+    'https://www.pulsehq.site'
+];
+
+const corsOptions: cors.CorsOptions = {
+    origin: (origin, callback) => {
+        if (!origin) {
+            return callback(null, true);
+        }
+        if (allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error(`CORS policy does not allow access from the origin: ${origin}`));
+        }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+};
+
+app.use(cors(corsOptions));
+
 const io = new Server(server, {
     cors: {
-        origin: "https://main.d22pq7gf1qs87f.amplifyapp.com",
+        origin: allowedOrigins,
         methods: ["GET", "POST"]
     }
 });
@@ -74,17 +98,6 @@ cloudinary.config({
     api_key: process.env.CLOUNDINARY_API_KEY,
     api_secret: process.env.CLOUNDINARY_API_SECRET
 });
-
-// Add a list of allowed origins.
-// If you have more origins you would like to add, you can add them to the array below.
-const allowedOrigins = ['https://main.d22pq7gf1qs87f.amplifyapp.com'];
-
-const options: cors.CorsOptions = {
-    origin: allowedOrigins
-};
-
-// Then pass these options to cors:
-app.use(cors(options));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/assistant', assistantRoutes);
