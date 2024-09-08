@@ -5,4 +5,6 @@ export * from './Project.schema';
 export * from './Task.schema';
 export * from './TaskList.schema';
 export * from './Message.schema';
-export * from './Chat.schema'
+export * from './Chat.schema';
+export * from './Thread.schema';
+export * from './ThreadMessage.schema';

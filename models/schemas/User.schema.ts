@@ -15,6 +15,7 @@ export interface IUser extends Document {
     createdAt: Date;
     updatedAt: Date;
     lastActiveAt: Date;
+    threads: ObjectId[];
     matchPassword(enteredPassword: string): Promise<boolean>;
 }
 
@@ -30,7 +31,8 @@ const userSchema = new Schema<IUser>({
     profile: {type: Schema.Types.ObjectId, ref: 'Profile'},
     createdAt: {type: Date,required: true,default: Date.now()},
     updatedAt: {type: Date,required: true,default: Date.now()},
-    lastActiveAt: {type: Date,required: true,default: Date.now()}
+    lastActiveAt: {type: Date,required: true,default: Date.now()},
+    threads: {type: [Schema.Types.ObjectId], ref: 'Thread', required: true, default: []}
 });
 
 userSchema.pre('save', async function (next) {
