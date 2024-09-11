@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import {OpenAI} from "openai";
-import {Project, Thread, ThreadMessage, User} from "../models";
-import dotenv from "dotenv";
+import {IProject, ITask, ITaskList, IUser, Project, Thread, ThreadMessage, User} from "../models";
+import dotenv, {populate} from "dotenv";
+import {ITaskChecklistItem} from "../models/interfaces";
 
 dotenv.config()
 
@@ -99,15 +100,67 @@ export const createThreadMessage = async (req: Request, res: Response) => {
 
     try {
         // Fetch the user's projects where they are a member
-        const projects = await Project.find({ members: user._id });
+        const projects = await Project.find({ members: user._id }).populate([{
+            path: 'taskLists',
+            model: 'TaskList',
+            populate: {
+                path: 'tasks',
+                model: 'Task',
+                populate: [{
+                    path:'members',
+                    model: 'User',
+                    select: 'firstName lastName email'
+                },{
+                    path:'creator',
+                    model: 'User',
+                    select: 'firstName lastName email'
+                }]
+            }
+        },{
+            path:'members',
+            model: 'User',
+            select: 'firstName lastName email'
+        },{
+            path:'creator',
+            model: 'User',
+            select: 'firstName lastName email'
+        }]);
 
         if (!projects || projects.length === 0) {
             return res.error({ message: 'No projects found for user' }, 404, false);
         }
 
         // Extract the relevant project information for context
-        const projectContext = projects.map(project =>
-            `Project: ${project}, Name: ${project.projectName}, Description: ${project.projectDescription}`).join('\n');
+        const projectContext = projects.map((project: IProject) => {
+            const creator = project.creator as unknown as IUser | null;
+            const creatorName = creator
+                ? `${creator.firstName} ${creator.lastName} ${creator.email}`
+                : 'Unknown creator';
+
+            const members = project.members as unknown as IUser[];
+            const memberNames = members.map((member: IUser) => `${member.firstName} ${member.lastName} ${member.email}`).join(', ');
+
+            const taskListDetails = (project.taskLists as unknown as ITaskList[]).map((taskList: ITaskList) => {
+                const taskDetails = (taskList.tasks as unknown as ITask[]).map((task: ITask) => {
+                    const taskCreator = task.creator as unknown as IUser | null;
+                    const taskCreatorName = taskCreator
+                        ? `${taskCreator.firstName} ${taskCreator.lastName}`
+                        : 'Unknown creator';
+
+                    const taskMembers = task.members as unknown as IUser[];
+                    const taskMemberNames = taskMembers.map((member: IUser) => `${member.firstName} ${member.lastName}`).join(', ');
+
+                    const checklistDetails = task.checkList?.map((item: ITaskChecklistItem) =>
+                        `Item: ${item.text}, Completed: ${item.isCompleted}`).join(', ') || 'No checklist';
+
+                    return `Task Title: ${task.title}, Description: ${task.description}, Creator: ${taskCreatorName}, Members: ${taskMemberNames}, Status: ${task.taskStatus}, Checklist: ${checklistDetails}`;
+                }).join(' ');
+
+                return `Task List: ${taskList.taskListName}\nTasks:\n${taskDetails}`;
+            }).join(' ');
+
+            return `Project: ${project.projectName}\nDescription: ${project.projectDescription}\nCreator: ${creatorName}\nMembers: ${memberNames}\nTask Lists:\n${taskListDetails}`;
+        }).join(' ');
 
         // Save the user message
         const userMessage: any = await ThreadMessage.create({
@@ -126,16 +179,26 @@ export const createThreadMessage = async (req: Request, res: Response) => {
                 res.error({message: 'Message not created'}, 500, false);
             }
             // Create prompt for OpenAI, using both the user's message and project context
-            const prompt = `You are an assistant. The user is working on the following projects:\n${projectContext}\nThe user asks: ${text}\nPlease provide a helpful response.`;
+            let prompt = `You are a helpful assistant. The user is working on the following projects: ${projectContext}. Based on the user's input: "${text}", provide an accurate and concise response. If the question is unclear, ask the user for clarification. Only provide details when specifically requested. Avoid unnecessary symbols and formatting like lists or bullet points. Respond with a simple, plain text answer.`;
+
+            // Handle cases where the user doesn't specify a project-related question
+            if (!projectContext.trim()) {
+                prompt = `The user has asked: "${text}". However, no project information is available. Kindly ask the user for more details about the relevant project if necessary. Respond with a concise, plain text answer without unnecessary symbols.`;
+            }
 
             // Call OpenAI to generate a response
             const completion = await openai.chat.completions.create({
                 model: "gpt-4o-mini",
                 messages: [{role: "system", content: "You are a helpful assistant."},
                     {role: "user", content: prompt}],
+                max_tokens: 150,
             });
             if (completion?.choices.length > 0 && completion.choices[0].message.content) {
-                const assistantResponse = completion.choices[0].message.content.trim();
+                let assistantResponse = completion?.choices?.[0]?.message?.content?.trim();
+                if (!assistantResponse) {
+                    return res.error({ message: 'Assistant response not generated' }, 500, false);
+                }
+                assistantResponse = assistantResponse.replace(/[*_~`]/g, '');
                 // Save the assistant's response as a message
                 const assistantMessage: any = await ThreadMessage.create({
                     text: assistantResponse,

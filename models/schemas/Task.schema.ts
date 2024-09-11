@@ -2,7 +2,7 @@ import mongoose, {Document, ObjectId, Schema} from 'mongoose';
 import {UserPosition, TaskStatus} from "../types";
 import {ITaskChecklistItem} from "../interfaces";
 
-interface ITask extends Document {
+export interface ITask extends Document {
     taskDepartment: UserPosition,
     taskStatus:TaskStatus,
     creator: ObjectId;

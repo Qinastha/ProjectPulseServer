@@ -1,6 +1,6 @@
 import mongoose, {Document, ObjectId, Schema} from 'mongoose';
 
-interface ITaskList extends Document {
+export interface ITaskList extends Document {
    taskListName: string;
    tasks: ObjectId[];
    createdAt: Date;
