@@ -19,7 +19,6 @@ export const createTask = async (req: Request,res: Response) => {
     try {
         const newTask = await Task.create(taskObj)
         if(newTask) {
-            console.log(newTask)
             const taskId = newTask._id as ObjectId
             const updatedTaskList = await TaskList.findOneAndUpdate({_id: taskListId},{$push: {tasks: taskId}},{new: true})
             if(updatedTaskList) {

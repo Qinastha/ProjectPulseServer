@@ -4,7 +4,6 @@ import {Project, TaskList} from "../models";
 export const createTaskList = async (req: Request,res: Response) => {
     const projectId = req.params.projectId;
     const {taskListName,taskLists} = req.body
-    console.log(req.params)
     try {
         const projectTaskList = await TaskList.create({taskListName});
         if(projectTaskList) {

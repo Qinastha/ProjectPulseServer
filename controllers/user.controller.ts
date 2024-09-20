@@ -20,7 +20,6 @@ export const getUser = async (req: Request, res: Response) => {
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
     const users = await User.find();
-    console.log(users);
     if (users) {
       res.success(users, "All users are successfully retrieved", 201, true);
     } else {
@@ -74,8 +73,6 @@ export const deleteUser = async (req: Request, res: Response) => {
       _id: req.user.profile._id,
     });
     // const deletedProjects = await Project.updateMany({members:{$in:{$eq: userId}}},{members: {$pull: {$eq: userId}}})
-    console.log(deletedUser);
-    console.log(deletedProfile);
     if (deletedUser && deletedProfile) {
       res.success(
         null,

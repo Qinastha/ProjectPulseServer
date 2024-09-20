@@ -52,7 +52,6 @@ export const numberOfUsers = async (req: Request,res: Response) => {
             let data:any = {};
             users.forEach(user => {
                 const createdMonth = monthNames[user.createdAt?.getMonth()];
-                console.log(createdMonth)
                 if(createdMonth) {
                     if(Object.keys(data).includes(createdMonth)) {
                         data[createdMonth] += 1
@@ -115,7 +114,6 @@ export const getProjectMembersPerformance = async (req: Request,res: Response) =
                 const createdMonth = monthNames[member.createdAt?.getMonth()];
                 allCompletedTasks.forEach((task: any)=> {
                     if(task.members.find((foundMember: any) => foundMember._id.equals(member._id))){
-                        console.log('exist')
                         if(Object.keys(memberData).includes(createdMonth)) {
                             memberData[createdMonth] += 1
                         } else {
